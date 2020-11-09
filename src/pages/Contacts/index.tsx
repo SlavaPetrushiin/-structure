@@ -1,128 +1,143 @@
-import React, { useEffect, useState } from 'react';
-import api from '../../api/api';
+import React from 'react';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Table from '@material-ui/core/Table';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableBody from '@material-ui/core/TableBody';
-import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import ReplayIcon from '@material-ui/icons/Replay';
+import AppsIcon from '@material-ui/icons/Apps';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import FilledInput from '@material-ui/core/FilledInput';
+import CloseIcon from '@material-ui/icons/Close';
+import ContactsTable from './ContactsTable';
+import useContacts from '../../hooks.ts/useContacts';
 
-interface IContacts {
-	name: string
-	email: string
-	phone: string
-	data: string
-	location: string
-	src: string
-	nat: string	
-}
-
-const useContacts = () => {
-	const [data, setData] = useState<IContacts[]>([]);
-	const [error, setError] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
-
-	useEffect(() => {
-		(async () => {
-			try {
-				setIsLoading(true);
-				const {results, error} = await api.getUsers();
-
-				if(error) throw new Error(error);
-
-				const contacts = results.map((user: any) => ({
-					name: user.name.title + ' ' + user.name.first + ' ' + user.name.last,
-					email: user.email,
-					phone: user.phone,
-					data: user.dob.date,
-					location: user.location.country + ' ' + user.location.city,
-					src: user.picture.medium,
-					nat: user.nat
-				}));
-
-				setData(contacts);
-				setError('');
-			} catch(error) {
-				setError(error);
-			}finally{
-				setIsLoading(false);
-			}
-		})();
-	}, []);
-	
-	return {
-		data,
-		error,
-		isLoading
-	}
-}
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		container: {
+			marginTop: 20
+		},
+		contactsHead: {
+			marginBottom: 20
+		},
+		root: {
+			padding: '2px 4px',
+		},
+		searchInput: {
+			width: 350,
+			border: '1px solid rgba(224, 224, 224, 1)',
+			display: 'flex',
+			alignSelf: 'center',
+			marginRight: 30
+		},
+		selectInput: {
+			width: 350,
+			border: '1px solid rgba(224, 224, 224, 1)',
+			display: 'flex',
+			alignSelf: 'center',
+			marginRight: 30
+		},
+		input: {
+			marginLeft: theme.spacing(1),
+			flex: 1,
+		},
+		iconButton: {
+			padding: 10,
+		},
+		divider: {
+			height: 28,
+			margin: 4,
+		},
+		formControl: {
+			minWidth: 120,
+		},
+		search: {
+			width: 250
+		}
+	}),
+);
 
 const Contacts = () => {
-	const {data, error, isLoading} = useContacts();
-	const tableHead = ['Avatar', 'FullName', 'Birthday', 'Email', 'Phone', 'Location', 'Nationality'];
+	const { data, error, isLoading } = useContacts();
+	const classes = useStyles();
 
-	const renderTableHead = () => {
-		return (
-			<TableHead>
-				<TableRow>
-					{tableHead.map((title, i) => <TableCell key={i}>{title}</TableCell>)}
-				</TableRow>
-			</TableHead>
-		)
+	if (isLoading) {
+		return <Typography>...Loading</Typography>
 	}
 
-	const renderTableBody = () => {
-		return (
-			<TableBody>
-				{data.map((user: IContacts, i) => {
-					return (
-						<TableRow key={i}>
-							<TableCell>
-								<img src={user.src} alt={'avatar'}/>
-							</TableCell>
-							<TableCell>
-								{user.name}
-							</TableCell>
-							<TableCell>
-								{user.data}
-							</TableCell>
-							<TableCell>
-								{user.email}
-							</TableCell>
-							<TableCell>
-								{user.phone}
-							</TableCell>
-							<TableCell>
-								{user.location}
-							</TableCell>
-							<TableCell>
-								{user.nat}
-							</TableCell>
-						</TableRow>
-					)
-				})}
-			</TableBody>
-		)
-	}
-
-	if(isLoading){
-		return <TextField>...Loading</TextField>
-	}
-
-	if(error){
-		return <TextField>...Error</TextField>
+	if (error) {
+		return <Typography>...Error</Typography>
 	}
 
 	return (
-		<div>
-			<Container maxWidth="lg">
-				<Table>
-					{renderTableHead()}
-					{renderTableBody()}
-				</Table>
-			</Container>
-		</div>
+		<Container className={classes.container} maxWidth="lg" >
+			<Grid item xs={12}>
+				<Box className={classes.contactsHead} display="flex" justifyContent="space-between">
+					<Typography variant="h4">Contacts</Typography>
+					<Box display="flex">
+						<Box>
+							<ReplayIcon />
+						</Box>
+						<Box>
+							<AppsIcon />
+						</Box>
+						<Box>
+							<ListAltIcon />
+						</Box>
+					</Box>
+				</Box>
+			</Grid>
+			<Grid item xs={12}>
+				<Box className={classes.root} display="flex" justifyContent="space-between" alignItems="center" >
+					<Box display="flex">
+						<Box className={classes.searchInput}>
+							<InputBase
+								className={classes.input}
+								placeholder="Search Google Maps"
+								inputProps={{ 'aria-label': 'search google maps' }}
+							/>
+							<Divider className={classes.divider} orientation="vertical" />
+							<IconButton type="submit" className={classes.iconButton} aria-label="search">
+								<SearchIcon />
+							</IconButton>
+						</Box>
+						<Box className={classes.selectInput}>
+							<FormControl>
+								<Select
+									native
+									inputProps={{
+										name: 'gender',
+										id: 'filled-gender-native-simple',
+									}}
+								>
+									<option aria-label="Gender" value="" />
+									<option value={10}>all</option>
+									<option value={20}>man</option>
+									<option value={30}>women</option>
+								</Select>
+							</FormControl>
+						</Box>
+						<Box>
+							<FormControl>
+								<FilledInput id="component-filled" placeholder="Nationality"/>
+							</FormControl>
+						</Box>
+					</Box>
+					<Box display="flex">
+						<CloseIcon />
+					</Box>
+				</Box>
+			</Grid>
+			<Grid item xs={12}>
+				<ContactsTable contacts={data} />
+			</Grid>
+		</Container>
 	)
 };
 
