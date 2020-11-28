@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import React from 'react';
 import Container from '@material-ui/core/Container';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -7,19 +6,15 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableBody from '@material-ui/core/TableBody';
 import Avatar from '@material-ui/core/Avatar';
-
+import CopyToText from './../../component/CopyToText';
+import getNationality, { countries } from './../../helpers/nationality';
 import { IContacts } from '../../hooks.ts/useContacts';
 
 type PropsType = {
 	contacts: IContacts[]
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({}),
-);
-
 const ContactsTable = ({ contacts }: PropsType) => {
-	const classes = useStyles();
 	const tableHead = ['Avatar', 'FullName', 'Birthday', 'Email', 'Phone', 'Location', 'Nationality'];
 
 	return (
@@ -35,7 +30,7 @@ const ContactsTable = ({ contacts }: PropsType) => {
 						return (
 							<TableRow key={user.id}>
 								<TableCell>
-									<Avatar alt={user.name} src={user.src}/>
+									<Avatar alt={user.name} src={user.src} />
 								</TableCell>
 								<TableCell>
 									{user.name}
@@ -44,16 +39,16 @@ const ContactsTable = ({ contacts }: PropsType) => {
 									{user.data}, {user.age} years old
 								</TableCell>
 								<TableCell>
-									{user.email}
+									<CopyToText text={user.email} />
 								</TableCell>
 								<TableCell>
-									{user.phone}
+									<CopyToText text={user.phone} />
 								</TableCell>
 								<TableCell>
 									{user.location}
 								</TableCell>
 								<TableCell>
-									{user.nat}
+									{getNationality(user.nat as keyof typeof countries)}
 								</TableCell>
 							</TableRow>
 						)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -16,7 +16,7 @@ import Select from '@material-ui/core/Select';
 import FilledInput from '@material-ui/core/FilledInput';
 import CloseIcon from '@material-ui/icons/Close';
 import ContactsTable from './ContactsTable';
-import useContacts from '../../hooks.ts/useContacts';
+import useContacts, { IContacts } from '../../hooks.ts/useContacts';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -66,6 +66,19 @@ const useStyles = makeStyles((theme: Theme) =>
 const Contacts = () => {
 	const { data, error, isLoading } = useContacts();
 	const classes = useStyles();
+	const [filteredData, setFilteredData] = useState<IContacts[]>([]);
+	const [genderFilter, setGenderFilter] = useState(10);
+	const [nationalityFilter, setNationalityFilter] = useState('');
+
+	console.log(nationalityFilter)
+
+	useEffect(() => {
+		setFilteredData(data);
+	}, [data])
+
+	useEffect(() => {
+		setFilteredData(data.filter(man => man.nat.includes(nationalityFilter)));
+	}, [nationalityFilter])
 
 	if (isLoading) {
 		return <Typography>...Loading</Typography>
@@ -73,6 +86,27 @@ const Contacts = () => {
 
 	if (error) {
 		return <Typography>...Error</Typography>
+	}
+
+	const handleSelect = (event: any) => {
+		switch(event.currentTarget.value){
+			case '10': {
+				setFilteredData([...data]);
+				break;
+			}
+			case '20': {
+				setFilteredData(data.filter(man => man.gender === 'male'));
+				break;
+			}
+			case '30': {
+				setFilteredData(data.filter(man => man.gender === 'female'));
+				break;
+			}
+		}
+	}
+	
+	const handleNationality = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setNationalityFilter(event.currentTarget.value.toUpperCase());
 	}
 
 	return (
@@ -113,10 +147,10 @@ const Contacts = () => {
 									native
 									inputProps={{
 										name: 'gender',
-										id: 'filled-gender-native-simple',
+										defaultValue: genderFilter
 									}}
+									onChange={handleSelect}
 								>
-									<option aria-label="Gender" value="" />
 									<option value={10}>all</option>
 									<option value={20}>man</option>
 									<option value={30}>women</option>
@@ -125,7 +159,7 @@ const Contacts = () => {
 						</Box>
 						<Box>
 							<FormControl>
-								<FilledInput id="component-filled" placeholder="Nationality"/>
+								<FilledInput id="component-filled" placeholder="Nationality" onChange={handleNationality} />
 							</FormControl>
 						</Box>
 					</Box>
@@ -135,7 +169,7 @@ const Contacts = () => {
 				</Box>
 			</Grid>
 			<Grid item xs={12}>
-				<ContactsTable contacts={data} />
+				<ContactsTable contacts={filteredData} />
 			</Grid>
 		</Container>
 	)

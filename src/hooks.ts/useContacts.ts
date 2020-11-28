@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { format, compareAsc } from 'date-fns';
+import { format } from 'date-fns';
 import api from '../api/api';
 
 export interface IContacts {
