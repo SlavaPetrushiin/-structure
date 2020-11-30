@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import ReplayIcon from '@material-ui/icons/Replay';
-import AppsIcon from '@material-ui/icons/Apps';
+import ViewListIcon from '@material-ui/icons/ViewList';
+import ViewModuleIcon from '@material-ui/icons/ViewModule';
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -17,6 +19,8 @@ import FilledInput from '@material-ui/core/FilledInput';
 import CloseIcon from '@material-ui/icons/Close';
 import ContactsTable from './ContactsTable';
 import useContacts, { IContacts } from '../../hooks.ts/useContacts';
+import ContactsCards from './ContactsCards';
+
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -69,8 +73,11 @@ const Contacts = () => {
 	const [filteredData, setFilteredData] = useState<IContacts[]>([]);
 	const [genderFilter, setGenderFilter] = useState(10);
 	const [nationalityFilter, setNationalityFilter] = useState('');
+  const [view, setView] = useState('list');
 
-	console.log(nationalityFilter)
+  const handleChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
+    setView(nextView);
+  };
 
 	useEffect(() => {
 		setFilteredData(data);
@@ -89,7 +96,7 @@ const Contacts = () => {
 	}
 
 	const handleSelect = (event: any) => {
-		switch(event.currentTarget.value){
+		switch (event.currentTarget.value) {
 			case '10': {
 				setFilteredData([...data]);
 				break;
@@ -104,7 +111,7 @@ const Contacts = () => {
 			}
 		}
 	}
-	
+
 	const handleNationality = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setNationalityFilter(event.currentTarget.value.toUpperCase());
 	}
@@ -115,15 +122,14 @@ const Contacts = () => {
 				<Box className={classes.contactsHead} display="flex" justifyContent="space-between">
 					<Typography variant="h4">Contacts</Typography>
 					<Box display="flex">
-						<Box>
-							<ReplayIcon />
-						</Box>
-						<Box>
-							<AppsIcon />
-						</Box>
-						<Box>
-							<ListAltIcon />
-						</Box>
+						<ToggleButtonGroup value={view} exclusive onChange={handleChange}>
+							<ToggleButton value="list" aria-label="list">
+								<ViewListIcon />
+							</ToggleButton>
+							<ToggleButton value="module" aria-label="module">
+								<ViewModuleIcon />
+							</ToggleButton>
+						</ToggleButtonGroup>
 					</Box>
 				</Box>
 			</Grid>
@@ -169,7 +175,11 @@ const Contacts = () => {
 				</Box>
 			</Grid>
 			<Grid item xs={12}>
-				<ContactsTable contacts={filteredData} />
+				{
+					view === 'list'
+						?	<ContactsCards contacts={filteredData}/>
+						: <ContactsTable contacts={filteredData} />
+				}
 			</Grid>
 		</Container>
 	)

@@ -6,8 +6,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableBody from '@material-ui/core/TableBody';
 import Avatar from '@material-ui/core/Avatar';
-import CopyToText from './../../component/CopyToText';
-import getNationality, { countries } from './../../helpers/nationality';
+import CopyToText from '../../component/CopyToText';
+import getNationality, { countries } from '../../helpers/nationality';
 import { IContacts } from '../../hooks.ts/useContacts';
 
 type PropsType = {
