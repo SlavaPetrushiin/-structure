@@ -73,10 +73,16 @@ const Contacts = () => {
 	const [filteredData, setFilteredData] = useState<IContacts[]>([]);
 	const [genderFilter, setGenderFilter] = useState(10);
 	const [nationalityFilter, setNationalityFilter] = useState('');
-  const [view, setView] = useState('list');
+	const [view, setView] = useState('list');
+	
+	useEffect(() => {
+		let view = localStorage.getItem('view') || 'list';
+		setView(view);
+	}, [setView])
 
   const handleChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
-    setView(nextView);
+		setView(nextView);
+		localStorage.setItem('view', nextView);
   };
 
 	useEffect(() => {
@@ -174,7 +180,7 @@ const Contacts = () => {
 					</Box>
 				</Box>
 			</Grid>
-			<Grid item xs={12}>
+			<Grid container spacing={5}>
 				{
 					view === 'list'
 						?	<ContactsCards contacts={filteredData}/>
