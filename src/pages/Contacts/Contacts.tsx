@@ -4,11 +4,6 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import ViewModuleIcon from '@material-ui/icons/ViewModule';
-import ViewQuiltIcon from '@material-ui/icons/ViewQuilt';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,7 +15,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import ContactsTable from './ContactsTable';
 import useContacts, { IContacts } from '../../hooks.ts/useContacts';
 import ContactsCards from './ContactsCards';
-
+import { DATA_VIEW_MODES } from './constans';
+import ToggleGroupContacts from './ToggleGroupContacts';
+import { useDataViewMode } from './useDataViewMode';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -73,18 +70,8 @@ const Contacts = () => {
 	const [filteredData, setFilteredData] = useState<IContacts[]>([]);
 	const [genderFilter, setGenderFilter] = useState(10);
 	const [nationalityFilter, setNationalityFilter] = useState('');
-	const [view, setView] = useState('list');
+	const [dataViewMode, setDataViewMode] = useDataViewMode();
 	
-	useEffect(() => {
-		let view = localStorage.getItem('view') || 'list';
-		setView(view);
-	}, [setView])
-
-  const handleChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
-		setView(nextView);
-		localStorage.setItem('view', nextView);
-  };
-
 	useEffect(() => {
 		setFilteredData(data);
 	}, [data])
@@ -125,19 +112,7 @@ const Contacts = () => {
 	return (
 		<Container className={classes.container} maxWidth="lg" >
 			<Grid item xs={12}>
-				<Box className={classes.contactsHead} display="flex" justifyContent="space-between">
-					<Typography variant="h4">Contacts</Typography>
-					<Box display="flex">
-						<ToggleButtonGroup value={view} exclusive onChange={handleChange}>
-							<ToggleButton value="list" aria-label="list">
-								<ViewListIcon />
-							</ToggleButton>
-							<ToggleButton value="module" aria-label="module">
-								<ViewModuleIcon />
-							</ToggleButton>
-						</ToggleButtonGroup>
-					</Box>
-				</Box>
+				<ToggleGroupContacts dataViewMode={dataViewMode} setDataViewMode={setDataViewMode}/>
 			</Grid>
 			<Grid item xs={12}>
 				<Box className={classes.root} display="flex" justifyContent="space-between" alignItems="center" >
@@ -182,7 +157,7 @@ const Contacts = () => {
 			</Grid>
 			<Grid container spacing={5}>
 				{
-					view === 'list'
+					dataViewMode === DATA_VIEW_MODES.GRID
 						?	<ContactsCards contacts={filteredData}/>
 						: <ContactsTable contacts={filteredData} />
 				}
