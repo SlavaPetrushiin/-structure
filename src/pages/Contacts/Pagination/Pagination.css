@@ -1,0 +1,5 @@
+.pagination, .navigation{
+	margin: 40px 0 !important;
+	display: flex;
+	justify-content: center;
+}

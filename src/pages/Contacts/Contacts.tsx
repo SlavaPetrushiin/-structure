@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -18,6 +18,8 @@ import ContactsCards from './ContactsCards';
 import { DATA_VIEW_MODES } from './constans';
 import ToggleGroupContacts from './ToggleGroupContacts';
 import { useDataViewMode } from './useDataViewMode';
+import Pagination from '@material-ui/lab/Pagination';
+import PaginationData from './Pagination/PaginationData';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -71,9 +73,12 @@ const Contacts = () => {
 	const [genderFilter, setGenderFilter] = useState(10);
 	const [nationalityFilter, setNationalityFilter] = useState('');
 	const [dataViewMode, setDataViewMode] = useDataViewMode();
+
+	const pageSize = 10;
 	
 	useEffect(() => {
-		setFilteredData(data);
+		const newFilteredData = data.slice(0, pageSize);
+		setFilteredData(newFilteredData);
 	}, [data])
 
 	useEffect(() => {
@@ -162,6 +167,7 @@ const Contacts = () => {
 						: <ContactsTable contacts={filteredData} />
 				}
 			</Grid>
+			<PaginationData setFilteredData={setFilteredData} data={data}/>
 		</Container>
 	)
 };
