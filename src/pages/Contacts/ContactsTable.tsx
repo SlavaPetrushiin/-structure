@@ -18,7 +18,7 @@ const ContactsTable = ({ contacts }: PropsType) => {
 	const tableHead = ['Avatar', 'FullName', 'Birthday', 'Email', 'Phone', 'Location', 'Nationality'];
 
 	return (
-		<Container maxWidth="lg">
+		<Container maxWidth="lg" data-testid="contacts-table-container">
 			<Table>
 				<TableHead>
 					<TableRow>

@@ -86,7 +86,7 @@ const Contacts = () => {
 	}, [nationalityFilter])
 
 	if (isLoading) {
-		return <Typography>...Loading</Typography>
+		return <Typography data-testid="contacts-loader">...Loading</Typography>
 	}
 
 	if (error) {
